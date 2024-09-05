@@ -369,20 +369,20 @@ frappe.setup.slides_settings = [
 	{
 		// Welcome (language) slide
 		name: "welcome",
-		title: __("Welcome"),
+		title: __("Chào mừng"),
 
 		fields: [
 			{
 				fieldname: "language",
-				label: __("Your Language"),
+				label: __("Ngôn ngữ của bạn"),
 				fieldtype: "Autocomplete",
-				placeholder: __("Select Language"),
-				default: "English",
+				placeholder: __("Chọn ngôn ngữ"),
+				default: "Việt",
 				reqd: 1,
 			},
 			{
 				fieldname: "country",
-				label: __("Your Country"),
+				label: __("Quốc gia của bạn"),
 				fieldtype: "Autocomplete",
 				placeholder: __("Select Country"),
 				reqd: 1,
@@ -392,16 +392,17 @@ frappe.setup.slides_settings = [
 			},
 			{
 				fieldname: "timezone",
-				label: __("Time Zone"),
-				placeholder: __("Select Time Zone"),
+				label: __("Múi giờ"),
+				placeholder: __("Chọn múi giờ"),
 				fieldtype: "Select",
+				default: "Asia/Ho_Chi_Minh",
 				reqd: 1,
 			},
 			{ fieldtype: "Column Break" },
 			{
 				fieldname: "currency",
-				label: __("Currency"),
-				placeholder: __("Select Currency"),
+				label: __("Tiền tệ"),
+				placeholder: __("Chọn loại tiền tệ"),
 				fieldtype: "Select",
 				reqd: 1,
 			},
