@@ -395,7 +395,6 @@ frappe.setup.slides_settings = [
 				label: __("Múi giờ"),
 				placeholder: __("Chọn múi giờ"),
 				fieldtype: "Select",
-				default: "Asia/Ho_Chi_Minh",
 				reqd: 1,
 			},
 			{ fieldtype: "Column Break" },
@@ -621,8 +620,11 @@ frappe.setup.utils = {
 
 			// add all timezones at the end, so that user has the option to change it to any timezone
 			$timezone.add_options(data.all_timezones);
-			slide.get_field("timezone").set_input($timezone.val());
-
+			// console.log("data.all_timezones",data.all_timezones);
+			
+			slide.get_field("timezone").set_input("Asia/Ho_Chi_Minh");
+			// console.log("$timezone.val()",$timezone.val());
+			
 			// temporarily set date format
 			frappe.boot.sysdefaults.date_format =
 				data.country_info[country].date_format || "dd-mm-yyyy";
