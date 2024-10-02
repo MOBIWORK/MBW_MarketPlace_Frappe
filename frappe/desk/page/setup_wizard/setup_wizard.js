@@ -623,7 +623,7 @@ frappe.setup.utils = {
 			// console.log("data.all_timezones",data.all_timezones);
 			
 			slide.get_field("timezone").set_input("Asia/Ho_Chi_Minh");
-			// console.log("$timezone.val()",$timezone.val());
+			// console.log("$timezone.val()",$timezone.val()); 
 			
 			// temporarily set date format
 			frappe.boot.sysdefaults.date_format =
