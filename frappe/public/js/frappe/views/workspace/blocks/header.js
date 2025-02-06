@@ -115,7 +115,7 @@ export default class Header extends Block {
 			text = text.replace(only_text, __(only_text));
 
 			this._element.innerHTML = contains_html_tag
-				? text
+				? `<span class="h4"><b>${__(extractContent(text))}</b></span>`
 				: `<span class="h${this._settings.default_size}">${text}</span>`;
 		}
 
@@ -148,3 +148,8 @@ export default class Header extends Block {
 		};
 	}
 }
+function extractContent(s) {
+	var span = document.createElement('span');
+	span.innerHTML = s;
+	return span.textContent || span.innerText;
+  }
