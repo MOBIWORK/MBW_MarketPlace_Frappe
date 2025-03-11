@@ -15,8 +15,8 @@ export default class GridRow {
 		let me = this;
 		let render_row = true;
 
-		this.wrapper = $('<div class="grid-row"></div>');
-		this.row = $('<div class="data-row row"></div>')
+		this.wrapper = $('<div class="grid-row" style="border-bottom: 0"></div>');
+		this.row = $('<div class="data-row row" style="flex-wrap: nowrap;"></div>')
 			.appendTo(this.wrapper)
 			.on("click", function (e) {
 				if (
@@ -252,13 +252,13 @@ export default class GridRow {
 				: __("No.", null, "Title of the 'row number' column");
 
 			this.row_check = $(
-				`<div class="row-check sortable-handle col">
+				`<div class="row-check sortable-handle col" style="min-width: 40px; border-top: 1px solid var(--table-border-color);">
 					${this.row_check_html}
 				</div>`
 			).appendTo(this.row);
 
 			this.row_index = $(
-				`<div class="row-index sortable-handle col">
+				`<div class="row-index sortable-handle col" style="min-width: 40px; border-top: 1px solid var(--table-border-color);">
 					<span>${txt}</span>
 				</div>`
 			)
@@ -331,7 +331,7 @@ export default class GridRow {
 		if (this.doc && !this.grid.df.in_place_edit) {
 			// remove row
 			if (!this.open_form_button) {
-				this.open_form_button = $('<div class="col"></div>').appendTo(this.row);
+				this.open_form_button = $('<div class="col" style="min-width: 40px; border-top: 1px solid var(--table-border-color);"></div>').appendTo(this.row);
 
 				if (!this.configure_columns) {
 					const edit_msg = __("Edit", "", "Edit grid row");
@@ -362,7 +362,7 @@ export default class GridRow {
 
 		if (this.configure_columns && this.frm) {
 			this.configure_columns_button = $(`
-				<div class="col grid-static-col d-flex justify-content-center" style="cursor: pointer;">
+				<div class="col grid-static-col d-flex justify-content-center" style="cursor: pointer; min-width: 40px !important; background-color: var(--subtle-fg);">
 					<a>${frappe.utils.icon("setting-gear", "sm", "", "filter: opacity(0.5)")}</a>
 				</div>
 			`)
@@ -372,7 +372,7 @@ export default class GridRow {
 				});
 		} else if (this.configure_columns && !this.frm) {
 			this.configure_columns_button = $(`
-				<div class="col grid-static-col"></div>
+				<div class="col grid-static-col" style="min-width: 40px !important; border-top: 1px solid var(--table-border-color);"></div>
 			`).appendTo(this.row);
 		}
 	}
@@ -401,7 +401,7 @@ export default class GridRow {
 			});
 
 		this.grid_settings_dialog.set_primary_action(__("Update"), () => {
-			this.validate_columns_width();
+			// this.validate_columns_width();
 			this.columns = {};
 			this.update_user_settings_for_grid();
 			this.grid_settings_dialog.hide();
@@ -429,15 +429,13 @@ export default class GridRow {
 
 		$(`
 			<div class='form-group'>
-				<div class='row' style='margin-bottom:10px;'>
-					<div class='col-1'></div>
-					<div class='col-6' style='padding-left:20px;'>
+				<div class='row' style='margin:0px; margin-bottom:10px;'>
+					<div class='col-6 col-md-8'>
 						${__("Fieldname").bold()}
 					</div>
-					<div class='col-4'>
+					<div class='col-6 col-md-4' style='padding-left:5px;'>
 						${__("Column Width").bold()}
 					</div>
-					<div class='col-1'></div>
 				</div>
 				<div class='control-input-wrapper selected-fields'>
 				</div>
@@ -467,8 +465,6 @@ export default class GridRow {
 					sort_options: false,
 				},
 			],
-			secondary_action_label: __("Select All"),
-			secondary_action: () => this.select_all_columns(docfields),
 		});
 
 		d.set_primary_action(__("Add"), () => {
@@ -491,17 +487,6 @@ export default class GridRow {
 		});
 
 		d.show();
-	}
-
-	select_all_columns(docfields) {
-		docfields.forEach((docfield) => {
-			if (docfield.checked) {
-				return;
-			}
-			$(`.checkbox.unit-checkbox input[type="checkbox"][data-unit="${docfield.value}"]`)
-				.prop("checked", true)
-				.trigger("change");
-		});
 	}
 
 	prepare_columns_for_dialog(selected_fields) {
@@ -561,10 +546,12 @@ export default class GridRow {
 							<div class='col-1' style='padding-top: 4px;'>
 								<a style='cursor: grabbing;'>${frappe.utils.icon("drag", "xs")}</a>
 							</div>
-							<div class='col-6' style='padding-top: 5px;'>
+							<div class='col-6 col-md-8' style='padding-right:0px; padding-top: 5px;'>
 								${__(docfield.label, null, docfield.parent)}
 							</div>
-							<div class='col-4' style='padding-top: 2px; margin-top:-2px;' title='${__("Columns")}'>
+							<div class='col-3 col-md-2' style='padding-left:0px; padding-top: 2px; margin-top:-2px;' title='${__(
+								"Columns"
+							)}'>
 								<input class='form-control column-width my-1 input-xs text-right'
 								style='height: 24px; max-width: 80px; background: var(--bg-color);'
 									value='${docfield.columns || cint(d.columns)}'
@@ -738,7 +725,7 @@ export default class GridRow {
 
 		if (this.show_search) {
 			// last empty column
-			$(`<div class="col grid-static-col search"></div>`).appendTo(this.row);
+			$(`<div class="col grid-static-col search" style="min-width: 40px !important; border-top: 1px solid var(--table-border-color);"></div>`).appendTo(this.row);
 		}
 	}
 
@@ -825,7 +812,7 @@ export default class GridRow {
 		}
 
 		let $col = $(
-			'<div class="col grid-static-col col-xs-' + colsize + ' search"></div>'
+			'<div class="col grid-static-col col-xs-' + colsize + ' search" style="min-width: 40px !important; border-top: 1px solid var(--table-border-color);"></div>'
 		).appendTo(this.row);
 
 		let $search_input = $(`
@@ -946,8 +933,13 @@ export default class GridRow {
 			input_field.trigger("focus");
 		}
 
+		var styles = "min-width: 40px !important; border-top: 1px solid var(--table-border-color);"
+		if (!this.doc) {
+			styles = "min-width: 40px !important; background-color: var(--subtle-fg);"
+		}
+
 		var $col = $(
-			'<div class="col grid-static-col col-xs-' + colsize + " " + add_class + '"></div>'
+			'<div class="col grid-static-col col-xs-' + colsize + " " + add_class + '" style="' + styles +'"></div>'
 		)
 			.attr("data-fieldname", df.fieldname)
 			.attr("data-fieldtype", df.fieldtype)
@@ -1034,6 +1026,74 @@ export default class GridRow {
 
 				return out;
 			});
+        $(".grid-body").on("focus", "input", function () {
+            const $input = $(this);
+            const $popup = $input.siblings("ul[role='listbox']");
+
+            if ($popup.length) {
+                // Đảm bảo chỉ thêm style một lần
+                if (!$('#custom-popup-style').length) {
+                    const style = document.createElement("style");
+                    style.id = "custom-popup-style";
+                    style.innerHTML = `
+                ul[role="listbox"] {
+                    position: absolute;
+                    width: 100%;
+                    list-style: none;
+                    background-color: var(--bg-color);
+                    max-height: min(60vh, 300px);
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    border-radius: var(--border-radius);
+                    box-shadow: var(--shadow-md);
+                    border: 1px solid var(--border-color);
+                    left: 0;
+                    margin: 0;
+                    padding: var(--padding-xs);
+                    z-index: 4;
+                    min-width: 250px;
+                }
+                ul[role="listbox"]:empty {
+                    display: none;
+                }
+                ul[role="listbox"] > li,
+                ul[role="listbox"] > [role="option"] {
+                    cursor: pointer;
+                    padding: var(--padding-sm);
+                    color: var(--text-color);
+                    border-radius: var(--border-radius);
+                    white-space: unset;
+                    overflow-y: clip;
+                    text-overflow: ellipsis;
+                }
+                ul[role="listbox"] > li:not(:last-child),
+                ul[role="listbox"] > [role="option"]:not(:last-child) {
+                    margin-bottom: var(--margin-xs);
+                }
+                ul[role="listbox"] > li:hover,
+                ul[role="listbox"] > [role="option"]:hover,
+                ul[role="listbox"] > [role="option"][aria-selected="true"] {
+                    background-color: var(--awesomplete-hover-bg);
+                    color: var(--text-color);
+                }
+                ul[role="listbox"] a:hover {
+                    text-decoration: none;
+                }
+            `;
+                    document.head.appendChild(style);
+                }
+
+                // Định vị popup
+                const offset = $input.offset();
+                $popup.appendTo("body").css({
+                    position: "absolute",
+                    top: offset.top + $input.outerHeight(),
+                    left: offset.left,
+                    width: $input.outerWidth(),
+                    zIndex: 1050
+                }).show();
+            }
+        });
 
 		$col.field_area = $('<div class="field-area"></div>').appendTo($col).toggle(false);
 		$col.static_area = $('<div class="static-area ellipsis"></div>').appendTo($col).html(txt);
@@ -1132,13 +1192,15 @@ export default class GridRow {
 		// sync get_query
 		field.get_query = this.grid.get_field(df.fieldname).get_query;
 
-		// df.onchange is common for all rows in grid
-		let field_on_change_function = df.onchange;
-		field.df.change = (e) => {
-			// trigger onchange with current grid row field as "this"
-			field_on_change_function && field_on_change_function.apply(field, [e]);
-			me.refresh_field(field.df.fieldname);
-		};
+		if (!field.df.onchange_modified) {
+			var field_on_change_function = field.df.onchange;
+			field.df.onchange = (e) => {
+				field_on_change_function && field_on_change_function(e);
+				this.refresh_field(field.df.fieldname);
+			};
+
+			field.df.onchange_modified = true;
+		}
 
 		field.refresh();
 		if (field.$input) {

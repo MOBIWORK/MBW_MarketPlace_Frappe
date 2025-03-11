@@ -67,7 +67,7 @@ export default class Grid {
 				<p class="text-muted small grid-description"></p>
 				<div class="grid-custom-buttons"></div>
 				<div class="form-grid-container">
-					<div class="form-grid">
+					<div class="form-grid" style="overflow-x: auto; overflow-y: hidden !important;">
 						<div class="grid-heading-row"></div>
 						<div class="grid-body">
 							<div class="rows"></div>
@@ -128,7 +128,6 @@ export default class Grid {
 		this.setup_add_row();
 
 		this.setup_grid_pagination();
-		this.update_idx_and_name();
 
 		this.custom_buttons = {};
 		this.grid_buttons = this.wrapper.find(".grid-buttons");
@@ -149,17 +148,6 @@ export default class Grid {
 		} else {
 			description_wrapper.hide();
 		}
-	}
-
-	update_idx_and_name() {
-		this.data.forEach((d, ri) => {
-			if (d.idx === undefined) {
-				d.idx = ri + 1;
-			}
-			if (d.name === undefined) {
-				d.name = "row " + d.idx;
-			}
-		});
 	}
 
 	set_doc_url() {
@@ -893,25 +881,20 @@ export default class Grid {
 	}
 
 	duplicate_row(d, copy_doc) {
-		const noCopyFields = new Set([
-			"creation",
-			"modified",
-			"modified_by",
-			"idx",
-			"owner",
-			"parent",
-			"doctype",
-			"name",
-			"parentfield",
-		]);
-
-		const docfields = frappe.get_meta(this.doctype).fields || [];
-		$.each(docfields, function (_index, df) {
-			if (cint(df.no_copy)) noCopyFields.add(df.fieldname);
-		});
-
 		$.each(copy_doc, function (key, value) {
-			if (!noCopyFields.has(key)) {
+			if (
+				![
+					"creation",
+					"modified",
+					"modified_by",
+					"idx",
+					"owner",
+					"parent",
+					"doctype",
+					"name",
+					"parentfield",
+				].includes(key)
+			) {
 				d[key] = value;
 			}
 		});
@@ -981,7 +964,7 @@ export default class Grid {
 				}
 
 				total_colsize += df.colsize;
-				if (total_colsize > 11) return false;
+				// if (total_colsize > 11) return false;
 				this.visible_columns.push([df, df.colsize]);
 			}
 		}
