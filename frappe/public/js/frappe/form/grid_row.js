@@ -1387,6 +1387,26 @@ export default class GridRow {
 		if (frappe.utils.is_xs()) {
 			$(this.grid.form_grid).css("min-width", "0");
 			$(this.grid.form_grid).css("position", "unset");
+    	}
+
+		// Tìm container có thanh cuộn và đẩy scrollLeft về 0
+		let scrollContainer = this.wrapper.parent(); // Bắt đầu từ parent của wrapper
+		let foundScrollContainer = null;
+		while (scrollContainer.length > 0) {
+			let elementScrollLeft = scrollContainer.scrollLeft();
+			if (elementScrollLeft > 0) {
+				foundScrollContainer = scrollContainer;
+				console.log("Tìm thấy container với scrollLeft:", elementScrollLeft);
+				break;
+			}
+			scrollContainer = scrollContainer.parent();
+		}
+
+		// Nếu tìm thấy container, đẩy scroll về 0
+		if (foundScrollContainer) {
+			foundScrollContainer.scrollLeft(0);
+		} else {
+			console.log("Không tìm thấy container có scrollLeft, dùng mặc định");
 		}
 		if (!this.grid_form) {
 			this.grid_form = new GridRowForm({
