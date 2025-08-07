@@ -42,6 +42,22 @@ frappe.pages["setup-wizard"].on_page_load = function (wrapper) {
 			callback: function (r) {
 				frappe.setup.data.lang = r.message;
 
+				// Load Vietnamese messages if default language is Vietnamese
+				if (r.message.default_language === 'Việt') {
+					frappe.call({
+						method: "frappe.desk.page.setup_wizard.setup_wizard.load_messages",
+						args: {
+							language: "Việt",
+						},
+						callback: function (r2) {
+							if (r2.message) {
+								frappe.boot.lang = "Việt";
+								console.log("Vietnamese messages loaded");
+							}
+						},
+					});
+				}
+
 				frappe.setup.run_event("before_load");
 				var wizard_settings = {
 					parent: wrapper,
@@ -389,7 +405,7 @@ frappe.setup.slides_settings = [
 				label: __("Your Language"),
 				fieldtype: "Autocomplete",
 				placeholder: __("Select Language"),
-				default: "English",
+				default: "Việt",
 				reqd: 1,
 			},
 			{
@@ -455,7 +471,7 @@ frappe.setup.slides_settings = [
 				let session_language =
 					frappe.setup.utils.get_language_name_from_code(
 						frappe.boot.lang || navigator.language
-					) || "English";
+					) || "Việt";
 				let language_field = slide.get_field("language");
 
 				language_field.set_input(session_language);
@@ -645,7 +661,7 @@ frappe.setup.utils = {
 
 				clearTimeout(slide.language_call_timeout);
 				slide.language_call_timeout = setTimeout(() => {
-					let lang = selected_language || "English";
+					let lang = selected_language || "Việt";
 					frappe._messages = {};
 					frappe.call({
 						method: "frappe.desk.page.setup_wizard.setup_wizard.load_messages",

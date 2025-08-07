@@ -396,8 +396,7 @@ def load_languages():
 	for d in language_codes:
 		codes_to_names[d.language_code] = d.language_name
 	return {
-		"default_language": frappe.db.get_value("Language", frappe.local.lang, "language_name")
-		or frappe.local.lang,
+		"default_language": "Việt",
 		"languages": sorted(frappe.db.sql_list("select language_name from tabLanguage order by name")),
 		"codes_to_names": codes_to_names,
 	}
