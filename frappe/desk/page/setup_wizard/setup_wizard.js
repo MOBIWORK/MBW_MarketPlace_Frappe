@@ -42,33 +42,52 @@ frappe.pages["setup-wizard"].on_page_load = function (wrapper) {
 			callback: function (r) {
 				frappe.setup.data.lang = r.message;
 
-				// Load Vietnamese messages if default language is Vietnamese
 				if (r.message.default_language === 'Việt') {
+					// Khởi tạo mess rỗng
+					frappe._messages = {};
 					frappe.call({
 						method: "frappe.desk.page.setup_wizard.setup_wizard.load_messages",
+						freeze: true,
 						args: {
 							language: "Việt",
 						},
 						callback: function (r2) {
 							if (r2.message) {
 								frappe.boot.lang = "Việt";
+								frappe.setup._from_load_messages = true;
 								console.log("Vietnamese messages loaded");
 							}
+							// gọi hàm khởi tạo wizard
+							initializeWizard();
 						},
 					});
+				} else {
+					// Đáp ứng trường hợp người dùng chuyển ngôn ngữ khác
+					initializeWizard();
 				}
 
-				frappe.setup.run_event("before_load");
-				var wizard_settings = {
-					parent: wrapper,
-					slides: frappe.setup.slides,
-					slide_class: frappe.setup.SetupWizardSlide,
-					unidirectional: 1,
-					done_state: 1,
-				};
-				frappe.wizard = new frappe.setup.SetupWizard(wizard_settings);
-				frappe.setup.run_event("after_load");
-				frappe.wizard.show_slide(cint(frappe.get_route()[1]));
+				function initializeWizard() {
+					frappe.setup.run_event("before_load");
+					var wizard_settings = {
+						parent: wrapper,
+						slides: frappe.setup.slides,
+						slide_class: frappe.setup.SetupWizardSlide,
+						unidirectional: 1,
+						done_state: 1,
+					};
+					frappe.wizard = new frappe.setup.SetupWizard(wizard_settings);
+					frappe.setup.run_event("after_load");
+					frappe.wizard.show_slide(cint(frappe.get_route()[1]));
+					
+					// Làm mới lại các slide nếu có thay đổi ngôn ngữ
+					if (frappe.setup._from_load_messages) {
+						// Gọi hàm làm mới slide
+						frappe.wizard.refresh_slides();
+						// Xóa biến tạm để tránh làm mới lại slide không cần thiết
+						// khi người dùng chuyển ngôn ngữ khác và không cần gọi lại hàm load_messages trong các lần sau
+						delete frappe.setup._from_load_messages;
+					}
+				}
 			},
 		});
 	});
