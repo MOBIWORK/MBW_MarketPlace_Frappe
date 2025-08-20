@@ -310,6 +310,9 @@ def create_or_update_user(args):  # nosemgrep
 
 		frappe.flags.mute_emails = _mute_emails
 
+	if email and hasattr(frappe.local, "login_manager"):
+		frappe.local.login_manager.login_as(email)
+
 	if args.get("password"):
 		update_password(email, args.get("password"))
 
