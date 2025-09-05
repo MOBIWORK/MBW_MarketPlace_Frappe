@@ -11,6 +11,7 @@ import frappe
 import frappe.sessions
 import frappe.utils
 from frappe import _, is_whitelisted, ping
+from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.doctype.server_script.server_script_utils import get_server_script_map
 from frappe.monitor import add_data_to_monitor
 from frappe.permissions import check_doctype_permission
@@ -62,10 +63,7 @@ def handle():
 
 def execute_cmd(cmd, from_async=False):
 	"""execute a request as python module"""
-	for hook in reversed(frappe.get_hooks("override_whitelisted_methods", {}).get(cmd, [])):
-		# override using the last hook
-		cmd = hook
-		break
+	cmd = frappe.override_whitelisted_method(cmd)
 
 	# via server script
 	server_script = get_server_script_map().get("_api", {}).get(cmd)
@@ -263,7 +261,7 @@ def check_write_permission(doctype: str | None = None, name: str | None = None):
 	except frappe.DoesNotExistError:
 		# doc has not been inserted yet, name is set to "new-some-doctype"
 		# If doc inserts fine then only this attachment will be linked see file/utils.py:relink_mismatched_files
-		check_doctype_permission(doctype, "write")
+		frappe.new_doc(doctype).check_permission("write")
 		return
 
 	doc.check_permission("write")
@@ -279,8 +277,8 @@ def download_file(file_url: str):
 	Endpoints : download_file, frappe.core.doctype.file.file.download_file
 	URL Params : file_name = /path/to/file relative to site path
 	"""
-	file: "File" = frappe.get_doc("File", {"file_url": file_url})
-	if not file.is_downloadable():
+	file = find_file_by_url(file_url)
+	if not file:
 		raise frappe.PermissionError
 
 	frappe.local.response.filename = os.path.basename(file_url)

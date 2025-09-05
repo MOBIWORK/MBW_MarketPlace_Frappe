@@ -143,8 +143,8 @@ class BaseDocument:
 		return frappe.get_meta(self.doctype)
 
 	@cached_property
-	def permitted_fieldnames(self):
-		return get_permitted_fields(doctype=self.doctype, parenttype=getattr(self, "parenttype", None))
+	def permitted_fieldnames(self) -> set[str]:
+		return set(get_permitted_fields(doctype=self.doctype, parenttype=getattr(self, "parenttype", None)))
 
 	def __getstate__(self):
 		"""
@@ -1177,7 +1177,7 @@ class BaseDocument:
 			doctype = self.meta.get_field(parentfield).options if parentfield else self.doctype
 			df = frappe.get_meta(doctype).get_field(fieldname)
 
-			if df.fieldtype in ("Currency", "Float", "Percent"):
+			if df and df.fieldtype in ("Currency", "Float", "Percent"):
 				self._precision[cache_key][fieldname] = get_field_precision(df, self)
 
 		return self._precision[cache_key][fieldname]
@@ -1293,11 +1293,11 @@ class BaseDocument:
 	def cast(self, value, df):
 		return cast_fieldtype(df.fieldtype, value, show_warning=False)
 
-	def _extract_images_from_editor(self):
+	def _extract_images_from_text_editor(self):
 		from frappe.core.doctype.file.utils import extract_images_from_doc
 
 		if self.doctype != "DocType":
-			for df in self.meta.get("fields", {"fieldtype": ("in", ("Text Editor", "HTML Editor"))}):
+			for df in self.meta.get("fields", {"fieldtype": ("=", "Text Editor")}):
 				extract_images_from_doc(self, df.fieldname)
 
 
