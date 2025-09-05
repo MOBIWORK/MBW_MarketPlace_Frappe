@@ -1208,6 +1208,7 @@ export default class GridRow {
 		var me = this,
 			parent = column.field_area,
 			df = column.df;
+
 		var field = frappe.ui.form.make_control({
 			df: df,
 			parent: parent,
@@ -1225,7 +1226,7 @@ export default class GridRow {
 		field.get_query = this.grid.get_field(df.fieldname).get_query;
 
 		if (!field.df.onchange_modified) {
-			var field_on_change_function = field.df.onchange;
+			let field_on_change_function = field.df.onchange;
 			field.df.onchange = (e) => {
 				field_on_change_function && field_on_change_function(e);
 				this.refresh_field(field.df.fieldname);
